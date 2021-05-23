@@ -27,6 +27,21 @@ socket.on("user-connected", (name) => {
 socket.on("chat-message", (message, name) => {
     //add html elements for chat message
     console.log("chat message", message, name);
+    addChatMessage(message, name);
+});
+
+socket.on("add-todo", (task, peer_id)=>{
+    addTask(task, peer_id);
+});
+
+socket.on("start-timer", ()=>{
+
+});
+socket.on("set-time", (time)=>{
+
+});
+socket.on("stop-timer", ()=>{
+    
 });
 
 async function match(course) {
@@ -111,4 +126,13 @@ function addVideoStream(video_element, stream_obj) {
         video_element.play();
     });
     videoGrid.append(video_element);
+}
+
+//peer_id would be for the id of the list
+function addTask(task, peer_id){
+
+}
+
+function addChatMessage(message, name){
+
 }
