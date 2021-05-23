@@ -32,6 +32,9 @@ font & reset css
 reset
 --------------------------------------------- 
 */
+*{
+  box-sizing: border-box;
+}
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, div
 pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q,
 s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li,
@@ -144,7 +147,7 @@ body {
   }
 }
 
-a.main-button-slider {
+.main-button-slider {
   font-size: 14px;
   border-radius: 25px;
   padding: 15px 25px;
@@ -159,7 +162,7 @@ a.main-button-slider {
   transition: all 0.3s ease 0s;
 }
 
-a.main-button-slider2 {
+.main-button-slider2 {
   font-size: 14px;
   border-radius: 25px;
   padding: 15px 25px;
@@ -176,11 +179,11 @@ a.main-button-slider2 {
 }
 
 
-a.main-button-slider:hover {
+.main-button-slider:hover {
   background-color: #f1556a;
 }
 
-a.main-button-slider2:hover {
+.main-button-slider2:hover {
   background-color: #f1556a;
 }
 
@@ -1291,18 +1294,18 @@ layout :D
 timer 
 ----------
 */
-
 .timer {
   display:inline-block
 }
+
 
 .time-remaining{
   margin-top: 20px;
   background: white;
   margin-left: 20px;
-  margin-right: 50px;
+  margin-right: 40px;
   padding: 8px;
-  width: 215px;
+  width: 200px;
 }
 
 .enter-time{
@@ -1315,8 +1318,6 @@ tasks
 --------------------------------------------- 
 */
 
-
-
 input {
   width:75%;
   margin-right: 0;
@@ -1327,16 +1328,20 @@ input {
 }
 
 input.todo{
-  width:75%;
+  width:70%;
   padding: 10px;
+  margin: 0;
   border: none;
   font-size: 14px;  
+}
+div.margin_bot{
+  margin-bottom: 10px;
 }
 
 .addBtn {
   width: 25%;
   padding: 10px;
-  margin: 9px;
+  margin: 0;
   background: rgb(197, 197, 197);
   color: #555;
   text-align: center;

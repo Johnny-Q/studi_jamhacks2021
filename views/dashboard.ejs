@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="apple-touch-icon" sizes="76x76" href="/assets/img/apple-icon.png">
+  <title>
+    JamHack Study Buddy
+  </title>
+  <!--     Fonts and icons     -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <!-- Nucleo Icons -->
+  <!-- Font Awesome Icons -->
+  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+  <!-- CSS Files -->
+  <link id="pagestyle" href="/assets/css/soft-ui-dashboard.css" rel="stylesheet" />
+
+  
+  <script src="https://kit.fontawesome.com/29ee0bc57e.js" crossorigin="anonymous"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js" ></script>
+  <script src="/js/lobby.js" defer></script>
+  <script src="/js/todo.js" defer></script>
+</head>
+    <nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+      <div class="container-fluid py-1 px-3">
+        <nav aria-label="breadcrumb">
+          <h6 class="font-weight-bolder mb-0">Studi</h6>
+        </nav>
+      </div>
+    </nav>
+    <!-- End Navbar -->
+    <div class="container-fluid py-4">
+      <div class="row mt-4">
+        <div class="col-lg-7 mb-lg-0 mb-4">
+          <div class="card">
+            <div class="card-body p-3">
+              <div>
+                <div>
+                  <h5 class="font-weight-bolder">To Do </h5>
+                  <div class="container2">
+                    <div class="tasks">
+
+                        <input class="todo" type="text" id="myInput" placeholder="Things to be done..." />
+                        <button class="addBtn" id="add_button">Add</button>
+                        <ul id="myUL"></ul>
+                    </div>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7 mb-lg-0 mb-4">
+          <div class="card">
+            <div class="card-body p-3">
+              <div>
+                <div>
+                  <h5 class="font-weight-bolder">To Do </h5>
+                  <div class="container2">
+                    <div class="tasks">
+    
+                        <input class="todo" type="text" id="myInput2" placeholder="Things to be done..." />
+                        <button class="addBtn" id="add_button2">Add</button>
+                        <ul id="myUL2"></ul>
+                    </div>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7 mb-lg-0 mb-4">
+          <div class="card">
+            <div class="card-body p-3">
+              <div>
+                <div>
+                  <h5 class="font-weight-bolder">Timer </h5>
+                  <div class="container1">
+                    <div class="timer">
+                      Enter Time:<input id="userInput" class="enter-time" placeholder="0" />
+                      <div>Time Remaining:</div>
+                      <div class="time-remaining" id="seconds">0</div>
+                      
+                      <button class="addBtn" onclick="startTime()" id="start">Start</button>
+                      <button class="addBtn" onclick="stop()" id="stop">Stop</button>
+                      <button class="addBtn" onclick="reset()" id="reset">Reset</button>
+
+                      <script>
+                          var myVar;
+                          var timer = document.getElementById("userInput");
+                          var countDownSeconds = 0;
+
+                          function startTime() {
+                              if (countDownSeconds === 0) {
+                                  myVar = setInterval(start, 1000);
+                                  document.getElementById("seconds").innerHTML = timer.value;
+                                  countDownSeconds = timer.value;
+                              } else {
+                                  myVar = setInterval(start, 1000);
+                                  document.getElementById("seconds").innerHTML = countDownSeconds;
+                              }
+                          }
+
+                          function start() {
+                              countDownSeconds--;
+                              document.getElementById("seconds").innerHTML = countDownSeconds;
+                              if (countDownSeconds <= -1) {
+                                  stop();
+                                  document.getElementById("seconds").innerHTML = "0";
+                              }
+                          }
+
+                          function stop() {
+                              clearInterval(myVar);
+                          }
+
+                          function reset() {
+                              clearInterval(myVar);
+                              document.getElementById("seconds").innerHTML = "0";
+                              countDownSeconds = 0;
+                          }
+                      </script>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div class="row my-4">
+          <div class="col-lg-8 col-md-6 mb-md-0 mb-4">
+            <div class="card">
+              <h6>Video</h6>
+              <div class="card-body px-0 pb-2">
+                <div class="table-responsive">
+                  <style>
+                    #video-grid {
+                        display: grid;
+                        width: 100%;
+                        grid-template-columns: repeat(2, 1fr);
+                    }
+        
+                    video {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+                  </style>
+                  <div id="video-grid"></div>
+                  <button id="disableVideo">Disable Video</button>
+                  <button id="muteAudio">Mute</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+        </div>
+        </div>
+        <div class="col-lg-4 col-md-6">
+          <div class="card h-100">
+            <div class="card-header pb-0">
+              <h6>Chat</h6>
+            </div>
+            <div class="card-body p-3">
+              <div id = "message-container"></div>
+                <input type="text" id = "textbox">
+                <button type = "submit" id = "chat_send">Chat</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+
+</html>

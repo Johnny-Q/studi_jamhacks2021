@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+        <!-- Additional CSS Files -->
+        <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
+
+        <link rel="stylesheet" type="text/css" href="/assets/css/font-awesome.css" />
+
+        <link rel="stylesheet" href="/assets/css/templatemo-lava.css" />
+
+        <link rel="stylesheet" href="/assets/css/owl-carousel.css" />
+
+        <link rel="stylesheet" href="/css/asdf.css" />
+        <script src="https://kit.fontawesome.com/29ee0bc57e.js" crossorigin="anonymous"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://unpkg.com/peerjs@1.3.1/dist/peerjs.min.js"></script>
+        <script src="/js/lobby.js" defer></script>
+        <script src="/js/todo.js" defer></script>
+        <title>Document</title>
+    </head>
+    <body>
+        <div class="prelobby">
+            <input id="course_input" type="text" placeholder="What course are you studying for?" />
+            <button id="match" class="main-button-slider">Match Me!</button>
+        </div>
+
+        <div class="grid">
+            <div class="card1" id="todo1">
+                <h2>To Do</h2>
+                <div class="margin_bot">
+                    <input class="todo" type="text" id="myInput" placeholder="Things to be done..." />
+                    <button class="addBtn" id="add_button">Add</button>
+                </div>
+                <ul id="myUL"></ul>
+            </div>
+            <div class="card1" id="todo2">
+                <h2>Buddy's To Do</h2>
+                <div class="margin_bot">
+                    <input disabled class="todo" type="text" id="myInput2" placeholder="Things to be done..." />
+                    <button disabled class="addBtn" id="add_button2">Add</button>
+                </div>
+                <ul id="myUL2"></ul>
+            </div>
+            <div class="card1" id="timer">
+                <h2>Timer</h2>
+                <div class="timer">
+                    Enter Time:<input id="userInput" type="number" min="1" max="9999999" class="enter-time" placeholder="0" />
+                    <div id="sameLine">
+                        <div>Time Remaining:</div>
+                        <div class="time-remaining" id="seconds">0</div>
+                    </div>
+
+                    <button class="addBtn" onclick="triggerStart()" id="start">Start</button>
+                    <button class="addBtn" onclick="triggerStop()" id="stop">Stop</button>
+                    <button class="addBtn" onclick="triggerReset()" id="reset">Reset</button>
+
+                    <script>
+                        var myVar = null;
+                        var timer = document.getElementById("userInput").value;
+                        var countDownSeconds = 0;
+
+                        function triggerStart() {
+                            socket.emit("startTimer", document.getElementById("userInput").value);
+                            startTimer(document.getElementById("userInput").value);
+                        }
+                        function triggerStop() {
+                            socket.emit("stopTimer");
+                            stop();
+                        }
+                        function triggerReset() {
+                            socket.emit("resetTimer");
+                            reset();
+                        }
+
+                        function startTimer(time) {
+                            console.log(time);
+                            if (time < 1) {
+                                console.log("fucked here");
+                                return;
+                            }
+                            if (myVar) return;
+                            if (countDownSeconds === 0) {
+                                document.getElementById("seconds").innerText = time;
+                                countDownSeconds = time;
+                                myVar = setInterval(start, 1000);
+                            } else {
+                                document.getElementById("seconds").innerHTML = countDownSeconds;
+                                myVar = setInterval(start, 1000);
+                            }
+                        }
+
+                        function start() {
+                            countDownSeconds--;
+                            document.getElementById("seconds").innerHTML = countDownSeconds;
+                            if (countDownSeconds < 0) {
+                                stop();
+                                document.getElementById("seconds").innerHTML = "0";
+                                countDownSeconds = 0;
+                            }
+                        }
+
+                        function stop() {
+                            if (myVar != null) {
+                                clearInterval(myVar);
+                                myVar = null;
+                            }
+                        }
+
+                        function reset() {
+                            clearInterval(myVar);
+                            document.getElementById("seconds").innerHTML = "0";
+                            countDownSeconds = 0;
+                        }
+                    </script>
+                </div>
+            </div>
+            <div class="card2" id="video">
+                <h2>Video Call</h2>
+                <div class="join_call">
+                    <button id="join_call" class="main-button-slider">Join Call</button>
+                </div>
+                <div class="call_joined">
+                    <style>
+                        #video-grid {
+                            display: grid;
+                            width: 100%;
+                            grid-template-columns: repeat(2, 1fr);
+                        }
+
+                        video {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover;
+                        }
+                    </style>
+                    <div id="video-grid"></div>
+                    <button id="disableVideo">Disable Video</button>
+                    <button id="muteAudio">Mute</button>
+                </div>
+            </div>
+            <div class="card1" id="chat">
+                <h2>Chat</h2>
+                <div id="chatbox">
+                    <div class="message">
+                        <b>rob</b>
+                        <p class="userChat">this is ree</p>
+                    </div>
+                </div>
+                <div>
+                    <input type="text" id="chat_textbox" />
+                    <button type="submit" id="chat_send">Chat</button>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

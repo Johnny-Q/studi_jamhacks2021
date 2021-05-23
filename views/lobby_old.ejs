@@ -63,70 +63,14 @@ https://templatemo.com/tm-540-lava-landing-page
             <button>match me!</button>
         </div>
         <div>
-            <div class="container1">
-                <!-- ***** Chat ***** -->
-
-                <!-- ***** Timer ***** -->
-                <div class="timer">
-                    Enter Time:<input id="userInput" class="enter-time" placeholder="0" />
-                    <div>Time Remaining:</div>
-                    <div class="time-remaining" id="seconds">0</div>
-                    <br />
-                    <button class="addBtn" onclick="startTime()" id="start">Start</button>
-                    <button class="addBtn" onclick="stop()" id="stop">Stop</button>
-                    <button class="addBtn" onclick="reset()" id="reset">Reset</button>
-
-                    <script>
-                        var myVar;
-                        var timer = document.getElementById("userInput");
-                        var countDownSeconds = 0;
-
-                        function startTime() {
-                            if (countDownSeconds === 0) {
-                                myVar = setInterval(start, 1000);
-                                document.getElementById("seconds").innerHTML = timer.value;
-                                countDownSeconds = timer.value;
-                            } else {
-                                myVar = setInterval(start, 1000);
-                                document.getElementById("seconds").innerHTML = countDownSeconds;
-                            }
-                        }
-
-                        function start() {
-                            countDownSeconds--;
-                            document.getElementById("seconds").innerHTML = countDownSeconds;
-                            if (countDownSeconds <= -1) {
-                                stop();
-                                document.getElementById("seconds").innerHTML = "0";
-                            }
-                        }
-
-                        function stop() {
-                            clearInterval(myVar);
-                        }
-
-                        function reset() {
-                            clearInterval(myVar);
-                            document.getElementById("seconds").innerHTML = "0";
-                            countDownSeconds = 0;
-                        }
-                    </script>
-                </div>
+            
+             
             </div>
 
             <!-- ***** Video (2) ***** -->
 
             <!-- ***** Tasks - ayleen will do this :D ***** -->
-            <div class="container2">
-                <div class="tasks">
-                    <script src="https://kit.fontawesome.com/29ee0bc57e.js" crossorigin="anonymous"></script>
-
-                    <input class="todo" type="text" id="myInput" placeholder="Things to be done..." />
-                    <span class="addBtn" id="add_button">Add</span>
-                    <ul id="myUL"></ul>
-                    <script src="/assets/js/taskscript.js"></script>
-                </div>
-            </div>
+           
         </div>
 
         <style>

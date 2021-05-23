@@ -44,15 +44,6 @@ CREATE TABLE "AccountCourseConnect"(
 	FOREIGN KEY("account_id") REFERENCES "Accounts" (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 */
-
-// app.get('/', (req, res) => {
-//     res.redirect(`/${uuidV4()}`);
-// });
-
-// app.get('/:room', (req, res) => {
-//     res.render('room', {roomId: req.params.room })
-// });
-
 app.get("/", (req, res)=>{
     if(req.session.user_id){
         return res.redirect("/user/lobby");
@@ -85,6 +76,32 @@ io.on('connection', socket => {
         socket.on("chat-message", (message, name)=>{
             console.log("message", message, name);
             socket.to(roomID).emit("chat-message", message, name);
+        });
+
+        socket.on("addTodo", (task)=>{
+            console.log("addTodo", task);
+            socket.to(roomID).emit("addTodo", task);
+        });
+        socket.on("doneTodo", (todoId)=>{
+            console.log("doneTodo", todoId);
+            socket.to(roomID).emit("doneTodo", todoId);
+        })
+        socket.on("deleteItem", (x)=>{
+            console.log("deleteItem", x);
+            socket.to(roomID).emit("deleteItem", x);
+        });
+
+        socket.on("startTimer", (timer)=>{
+            console.log("startTimer", timer);
+            socket.to(roomID).emit("startTimer", timer);
+        });
+        socket.on("stopTimer", ()=>{
+            console.log("stopTimer");
+            socket.to(roomID).emit("stopTimer");
+        });
+        socket.on("resetTimer", ()=>{
+            console.log("resetTimer");
+            socket.to(roomID).emit("resetTimer");
         });
     });
 });

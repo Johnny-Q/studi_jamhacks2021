@@ -1,24 +1,5 @@
 const { v4: uuidV4 } = require('uuid')
-let users = [{
-    "user_id": 69,
-    "course": "asdf",
-    "roomID": uuidV4()
-},
-{
-    "user_id": 69,
-    "course": "few",
-    "roomID": uuidV4()
-},
-{
-    "user_id": 69,
-    "course": "cs150",
-    "roomID": uuidV4()
-},
-{
-    "user_id": 69,
-    "course": "asdf",
-    "roomID": uuidV4()
-}];
+let users = [];
 
 //only add user to queue if no users were found
 function addUser(user_id, course, roomID) {
@@ -31,19 +12,12 @@ function addUser(user_id, course, roomID) {
 function findUser(course) {
     for(let i = 0;i < users.length; i++){
         if(users[i].course == course){
-            return users[i]
+            let {user_id, course, roomID} = users[i];
+            users.splice(i, 1);
+            return {user_id, course, roomID};
         }
     }
     return null;
-    // let course_match = [];
-    // for (let i = 0; i < users.length; i++) {
-    //     if (users[i].course == course) {
-    //         course_match.push(users[i].id);
-    //         if (users[i].major == major) {
-    //             return users[i].id;
-    //         }
-    //     }
-    // }
 }
 
 function dumpUsers(){

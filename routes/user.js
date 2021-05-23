@@ -12,7 +12,7 @@ userRouter.use((req, res, next)=>{
 });
 userRouter.get("/lobby", (req, res)=>{
     console.log("get lobby");
-    res.render("lobby");
+    res.render("asdf");
 });
 
 //need to do this with a socket
