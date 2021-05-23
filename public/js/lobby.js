@@ -1,109 +1,114 @@
+//html element references
+const videoGrid = document.getElementById("video-grid");
+
+//initialize connections
 const socket = io("/");
-socket.on('user-connected', name => {
+const myPeer = new Peer(undefined, { host: "/", port: "3001" });
+const peers = {};
+
+//store the peer id for self
+let self_id = null;
+myPeer.on("open", (id) => {
+    self_id = id;
+});
+
+//socket handlers first
+function joinRoom(roomID, name) {
+    if (!self_id) {
+        throw "peer_js not set up yet";
+    }
+    socket.emit("join-room", roomID, name, self_id);
+}
+
+socket.on("user-connected", (name) => {
     console.log("user connected", name);
 });
 
-socket.on("chat-message", (message, name)=>{
+socket.on("chat-message", (message, name) => {
     //add html elements for chat message
     console.log("chat message", message, name);
 });
 
-socket.on("join-call", ()=>{
-
-});
-
-async function match(course){
-    let resp = await fetch("/user/queue",{
-        "method":"post",
-        "headers":{
-            "Content-Type": "application/json"
+async function match(course) {
+    let resp = await fetch("/user/queue", {
+        method: "post",
+        headers: {
+            "Content-Type": "application/json",
         },
-        "body":JSON.stringify({
-            course
-        })
+        body: JSON.stringify({
+            course,
+        }),
     });
     return await resp.json();
 }
-function joinRoom(roomID, name){
-    socket.emit("join-room", roomID, name);
-}
-
-function sendMessage(message, name){
+function sendMessage(message, name) {
     socket.emit("chat-message", message, name);
 }
 
-const videoGrid = document.getElementById('video-grid');
-
 //video stuff
-const myPeer = new Peer(undefined, {
-    host: '/',
-    port: '3001'
-});
+const self_video = document.createElement("video");
+function joinCall() {
+    navigator.mediaDevices
+        .getUserMedia({
+            video: true,
+            audio: true,
+        })
+        .then((self_stream) => {
+            socket.emit("join-call");
+            addVideoStream(self_video, self_stream);
 
-const myVideo = document.createElement('video');
-myVideo.muted = true;
-const peers = {};
-navigator.mediaDevices.getUserMedia({
-    video:true, 
-    audio:true
-}).then(stream => {
-    //stream has video and audio data
-    addVideoStream(myVideo,stream);
+            myPeer.on("call", (call) => {
+                console.log("getting called");
+                call.answer(self_stream);
+                const video = document.createElement("video");
+                call.on("stream", (userVideoStream) => {
+                    addVideoStream(video, userVideoStream);
+                });
+            });
 
-    myPeer.on('call', call => {
-        call.answer(stream);
-        const video = document.createElement('video');
-        call.on('stream', userVideoStream => {
-            addVideoStream(video, userVideoStream);
+            socket.on("join-call", (peer_id) => {
+                connectToNewUser(peer_id, self_stream);
+            });
+
+            var disableVideo = document.getElementById("disableVideo");
+            disableVideo.addEventListener("click", function (event) {
+                self_stream.getVideoTracks()[0].enabled = !self_stream.getVideoTracks()[0].enabled;
+                disableVideo.innerText = self_stream.getVideoTracks()[0].enabled ? "Disable Video" : "Enable Video";
+            });
+
+            var muteAudio = document.getElementById("muteAudio");
+            muteAudio.addEventListener("click", function (event) {
+                self_stream.getAudioTracks()[0].enabled = !self_stream.getAudioTracks()[0].enabled;
+                muteAudio.innerText = self_stream.getAudioTracks()[0].enabled ? "Mute" : "Unmute";
+            });
         });
-    });
+}
 
-    socket.on('user-connected', userId => {
-        connectToNewUser(userId, stream);
-    });
-
-    socket.on("chat-message", (author, message)=>{
-        //add html elements for chat message
-    });
-
-    var disableVideo = document.getElementById("disableVideo");
-    disableVideo.addEventListener("click", function (event) {
-        stream.getVideoTracks()[0].enabled = !stream.getVideoTracks()[0].enabled;
-        disableVideo.innerText = stream.getVideoTracks()[0].enabled ? "Disable Video" : "Enable Video";
-    });
-
-    var muteAudio = document.getElementById("muteAudio");
-    muteAudio.addEventListener("click", function(event) {
-        stream.getAudioTracks()[0].enabled = !stream.getAudioTracks()[0].enabled;
-        muteAudio.innerText = stream.getAudioTracks()[0].enabled ? "Mute" : "Unmute";
-    });
+self_video.muted = true;
+socket.on("user-disconnected", (peer_id) => {
+    if (peers[peer_id]) peers[peer_id].close();
 });
 
-socket.on('user-disconnected', userId => {
-    if (peers[userId]) peers[userId].close();
-});
-
-myPeer.on('open', id => {
-    socket.emit('join-room', ROOM_ID, id);
-});
-
-function connectToNewUser(userId, stream) {
-    const call = myPeer.call(userId, stream);
-    const video = document.createElement('video');
-    call.on('stream', userVideoStream => {
-        addVideoStream(video, userVideoStream);
+function connectToNewUser(peer_id, self_stream) {
+    console.log("connecting to new user");
+    const call = myPeer.call(peer_id, self_stream);
+    const video = document.createElement("video");
+    call.on("stream", (peer_stream) => {
+        addVideoStream(video, peer_stream);
     });
-    call.on('close', () => {
+
+    call.on("close", () => {
+        console.log("call closed");
         video.remove();
     });
 
-    peers[userId] = call;
+    peers[peer_id] = call;
 }
 
-function addVideoStream(video, stream) {
-    video.srcObject = stream;
-    video.addEventListener('loadedmetadata', () => {
-        video.play();
+function addVideoStream(video_element, stream_obj) {
+    video_element.srcObject = stream_obj;
+    video_element.addEventListener("loadedmetadata", () => {
+        video_element.play();
     });
-    videoGrid.append(video)
-};
+    videoGrid.append(video_element);
+}

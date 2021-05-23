@@ -68,21 +68,18 @@ app.use("/user", require("./routes/user"));
 io.on('connection', socket => {
     console.log("established socket connection with client");
 
-    socket.on("session_id", (session_id)=>{
-        console.log(session_id);
-    });
 
-    socket.on('join-room', (roomID, name) => {
-        console.log(roomID, name);
+    socket.on('join-room', (roomID, name, peerjs_id) => {
+        console.log("join-room", roomID, name, peerjs_id);
         socket.join(roomID);
         socket.to(roomID).emit('user-connected', name);
 
         socket.on("join-call", ()=>{
-            socket.to(roomID).emit("join-call");
+            socket.to(roomID).emit("join-call", peerjs_id);
         });
 
         socket.on('disconnect', () => {
-            socket.to(roomID).emit('user-disconnected', name);
+            socket.to(roomID).emit('user-disconnected', peerjs_id);
         });
 
         socket.on("chat-message", (message, name)=>{
