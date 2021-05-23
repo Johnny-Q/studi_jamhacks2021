@@ -1,20 +1,36 @@
-document.querySelector("#match").addEventListener("click", async ()=>{
+document.querySelector("#match").addEventListener("click", async () => {
     document.querySelector("div.prelobby").style.display = "none";
     document.querySelector("div.grid").style.display = "grid";
     let course = document.querySelector("#course_input").value;
 
-    let {roomID} = await match(course);
+    let { roomID } = await match(course);
     joinRoom(roomID, "");
 });
 
-document.querySelector("#join_call").addEventListener("click", async ()=>{
+document.querySelector("#join_call").addEventListener("click", async () => {
     joinCall();
     document.querySelector("div.join_call").style.display = "none";
 });
 
+document.querySelector("#chat_send").addEventListener("click", async () => {
+    let text = document.querySelector("#chat_textbox").value;
+    if (text == "") return;
+    document.querySelector("#chat_textbox").value = "";
+    sendMessage(text, "asdf");
+});
+
+document.querySelector("#chat_textbox").addEventListener("keydown", (e) => {
+    if (e.keyCode == 13) {
+        let text = document.querySelector("#chat_textbox").value;
+        if (text == "") return;
+        document.querySelector("#chat_textbox").value = "";
+        sendMessage(text, "asdf");
+    }
+});
+
 //html element references
 const videoGrid = document.getElementById("video-grid");
-
+const chatbox = document.querySelector("#chatbox");
 //initialize connections
 const socket = io("/");
 const myPeer = new Peer(undefined, { host: "/", port: "3001" });
@@ -44,27 +60,24 @@ socket.on("chat-message", (message, name) => {
     addChatMessage(message, name);
 });
 
-socket.on("addTodo", (task)=>{
+socket.on("addTodo", (task) => {
     console.log(partnerList);
     console.log("adding todo", task);
     partnerList.addTodo(task);
 });
-socket.on("doneTodo", (todoId)=>{
-    partnerList.doneTodo(todoId)
-})
-socket.on("deleteItem", (x)=>{
+socket.on("doneTodo", (todoId) => {
+    partnerList.doneTodo(todoId);
+});
+socket.on("deleteItem", (x) => {
     partnerList.deleteItem(x);
 });
 
-socket.on("start-timer", ()=>{
-
+socket.on("startTimer", (timer) => {
+    console.log("startTimer", timer);
+    startTimer(timer);
 });
-socket.on("set-time", (time)=>{
-
-});
-socket.on("stop-timer", ()=>{
-    
-});
+socket.on("stopTimer", () => {stop()});
+socket.on("resetTimer", () => {reset()});
 
 async function match(course) {
     let resp = await fetch("/user/queue", {
@@ -79,6 +92,7 @@ async function match(course) {
     return await resp.json();
 }
 function sendMessage(message, name) {
+    addChatMessage(message, "You");
     socket.emit("chat-message", message, name);
 }
 
@@ -150,17 +164,19 @@ function addVideoStream(video_element, stream_obj) {
     videoGrid.append(video_element);
 }
 
-//peer_id would be for the id of the list
-function addTask(task, peer_id){
+function addChatMessage(message, name) {
+    let message_div = document.createElement("div");
+    message_div.classList.add("message");
 
+    let username_p = document.createElement("p");
+    username_p.classList.add("username");
+    username_p.innerText = name;
+
+    let userChat_p = document.createElement("p");
+    userChat_p.classList.add("userChat");
+    userChat_p.innerText = message;
+
+    message_div.append(username_p, userChat_p);
+
+    chatbox.append(message_div);
 }
-
-function addChatMessage(message, name){
-
-}
-
-function randomColor() {
-    return '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
-}
-
-document.getElementsByClassName('username').style.color = randomColor();
