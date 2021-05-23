@@ -4,15 +4,20 @@ class TodoList {
         this.list_element = list_element;
         this.input_element = input_element;
         this.add_button = add_button;
-        this.add_button.addEventListener("click", ()=>{this.addTodo()});
-        this.input_element.addEventListener("keydown", (e) =>{
+        this.add_button.addEventListener("click", () => {
+            let todo = this.input_element.value;
+            this.addTodo(todo);
+            socket.emit("addTodo", todo);
+        });
+        this.input_element.addEventListener("keydown", (e) => {
             if (e.keyCode == 13) {
-                this.addTodo();
+                let todo = this.input_element.value;
+                this.addTodo(todo);
+                socket.emit("addTodo", todo);
             }
         });
     }
-    addTodo() {
-        let todoText = this.input_element.value;
+    addTodo(todoText) {
         if (todoText == "") {
             alert("You did not enter any item");
         } else {
@@ -60,14 +65,16 @@ class TodoList {
                 listElement.classList.add("checked");
             }
 
-            listElement.addEventListener("click",  (e)=> {
+            listElement.addEventListener("click", (e) => {
                 const selectedId = e.target.getAttribute("data-id");
                 this.doneTodo(selectedId);
+                socket.emit("doneTodo", selectedId);
             });
 
-            delBtn.addEventListener("click",  (e)=> {
+            delBtn.addEventListener("click", (e) => {
                 const delId = e.target.getAttribute("data-id");
                 this.deleteItem(delId);
+                socket.emit("deleteItem", delId);
             });
 
             this.list_element.appendChild(listElement);
@@ -76,5 +83,5 @@ class TodoList {
     }
 }
 
-todoList1 = new TodoList(document.querySelector("#myUL"), document.querySelector("#myInput"), document.querySelector("#add_button"));
-todoList2 = new TodoList(document.querySelector("#myUL2"), document.querySelector("#myInput2"), document.querySelector("#add_button2"));
+selfList = new TodoList(document.querySelector("#myUL"), document.querySelector("#myInput"), document.querySelector("#add_button"));
+partnerList = new TodoList(document.querySelector("#myUL2"), document.querySelector("#myInput2"), document.querySelector("#add_button2"));

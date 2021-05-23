@@ -1,3 +1,17 @@
+document.querySelector("#match").addEventListener("click", async ()=>{
+    document.querySelector("div.prelobby").style.display = "none";
+    document.querySelector("div.grid").style.display = "grid";
+    let course = document.querySelector("#course_input").value;
+
+    let {roomID} = await match(course);
+    joinRoom(roomID, "");
+});
+
+document.querySelector("#join_call").addEventListener("click", async ()=>{
+    joinCall();
+    document.querySelector("div.join_call").style.display = "none";
+});
+
 //html element references
 const videoGrid = document.getElementById("video-grid");
 
@@ -30,8 +44,16 @@ socket.on("chat-message", (message, name) => {
     addChatMessage(message, name);
 });
 
-socket.on("add-todo", (task, peer_id)=>{
-    addTask(task, peer_id);
+socket.on("addTodo", (task)=>{
+    console.log(partnerList);
+    console.log("adding todo", task);
+    partnerList.addTodo(task);
+});
+socket.on("doneTodo", (todoId)=>{
+    partnerList.doneTodo(todoId)
+})
+socket.on("deleteItem", (x)=>{
+    partnerList.deleteItem(x);
 });
 
 socket.on("start-timer", ()=>{
@@ -136,3 +158,9 @@ function addTask(task, peer_id){
 function addChatMessage(message, name){
 
 }
+
+function randomColor() {
+    return '#' + Math.floor(Math.random() * 0xFFFFFF).toString(16);
+}
+
+document.getElementsByClassName('username').style.color = randomColor();
